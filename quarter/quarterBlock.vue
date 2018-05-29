@@ -17,7 +17,6 @@
     name: 'quarter-block',
     data () {
       return {
-        currentYear: 2018,
         currentQuarter: 0
       }
     },
@@ -41,15 +40,33 @@
         type: Number,
         default: Infinity
       },
+      // 当取消季度选择时，左边应该归为负无穷，以让右边能够选择全部，右边相反同理
       reset: {
         type: Number,
         required: true
+      },
+      currentYear: {
+        required: true,
+        type: Number
+      }
+    },
+    watch: {
+      minQuarter (val) {
+        if (this.currentQuarter < this.minQuarter || this.currentQuarter > this.maxQuarter) {
+          this.currentQuarter = this.reset
+          this.$emit('quarterChange', this.currentQuarter)
+        }
+      },
+      maxQuarter (val) {
+        if (this.currentQuarter < this.minQuarter || this.currentQuarter > this.maxQuarter) {
+          this.currentQuarter = this.reset
+          this.$emit('quarterChange', this.currentQuarter)
+        }
       }
     },
     methods: {
       yearChange (payload) {
-        this.currentYear += payload
-        this.$emit('yearChange', this.currentYear)
+        this.$emit('yearChange', this.currentYear + payload)
       },
       quarterChange (index) {
         if (index < this.minQuarter || index > this.maxQuarter) return

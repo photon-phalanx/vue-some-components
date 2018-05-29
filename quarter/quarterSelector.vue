@@ -3,9 +3,9 @@
       <input type="text" class="quarter-input" @focus="focusHandle" v-model="rangeStr"/>
       <transition name="drop">
         <div class="dropdown" v-show="focus">
-          <quarter-block class="quarter-block" :min-year="leftMinYear" :max-year="rightCurrentYear" :max-quarter="leftMaxQuarter" :reset="-Infinity"
+          <quarter-block class="quarter-block" :min-year="leftMinYear" :max-year="rightCurrentYear" :max-quarter="leftMaxQuarter" :reset="-Infinity" :currentYear="leftCurrentYear"
                          @yearChange="yearChangeHandler(1, $event)" @quarterChange="quarterChangeHandler(1, $event)"></quarter-block>
-          <quarter-block class="quarter-block" :min-year="leftCurrentYear" :max-year="rightMaxYear" :min-quarter="rightMinQuarter" :max-quarter="rightMaxQuarter" :reset="Infinity"
+          <quarter-block class="quarter-block" :min-year="leftCurrentYear" :max-year="rightMaxYear" :min-quarter="rightMinQuarter" :max-quarter="rightMaxQuarter" :reset="Infinity" :currentYear="rightCurrentYear"
                          @yearChange="yearChangeHandler(2, $event)" @quarterChange="quarterChangeHandler(2, $event)"></quarter-block>
         </div>
       </transition>
@@ -21,8 +21,8 @@
       return {
         rangeStr: '',
         focus: false,
-        leftCurrentYear: new Date().getFullYear(),
-        rightCurrentYear: new Date().getFullYear(),
+        leftCurrentYear: this.rightMaxYear,
+        rightCurrentYear: this.rightMaxYear,
         leftCurrentQuarter: -Infinity,
         rightCurrentQuarter: Infinity
       }
@@ -83,6 +83,11 @@
         let quarter = month / 3 + 1
         if (this.rightCurrentYear < year) return Infinity
         else return quarter
+      }
+    },
+    created () {
+      if (this.rightMaxYear < this.leftMinYear) {
+        throw new Error('设置的年份上限大于下限了?检查一下？')
       }
     },
     mounted () {
